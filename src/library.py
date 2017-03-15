@@ -1,3 +1,4 @@
+from haversine import haversine
 import requests
 
 import exceptions
@@ -13,3 +14,12 @@ def get_all_states():
         raise exceptions.RequestsError(exc) from exc
 
     return response.json()
+
+
+def get_vehicle_with_coordinates(states):
+    for item in states:
+        yield item[1], (item[6], item[5])  # callsign, (lat, long)
+
+
+def distance_between_points(point1, point2):
+    return haversine(point1, point2)
