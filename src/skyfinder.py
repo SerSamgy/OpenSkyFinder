@@ -1,7 +1,7 @@
 from haversine import haversine
 import requests
 
-import exceptions
+import src.exceptions as exceptions
 
 OPEN_SKY_URL = 'https://opensky-network.org/api'
 GET_ALL_STATES_URL = OPEN_SKY_URL + '/states/all'
