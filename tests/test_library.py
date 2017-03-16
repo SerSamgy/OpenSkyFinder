@@ -20,13 +20,17 @@ def test_distance_between_points(retrieved_distance, correct_distance):
     assert retrieved_distance == correct_distance
 
 
-def test_get_vehicle_information(vehicle_info_gen, vehicle_1, vehicle_2):
-    assert next(vehicle_info_gen) == vehicle_1
-    assert next(vehicle_info_gen) == vehicle_2
+def test_get_vehicle_information(vehicle_info_gen, available_vehicles):
+    for retrieved, correct in zip(vehicle_info_gen, available_vehicles):
+        assert retrieved == correct
 
 
 def test_check_if_vehicle_in_radius(vehicle_check_result, vehicle_check_correct):
     assert vehicle_check_result == vehicle_check_correct
+
+
+def test_retrieve_all_vehicles_in_radius(vehicles_in_radius, correct_vehicles_in_radius):
+    assert vehicles_in_radius == correct_vehicles_in_radius
 
 
 @pytest.fixture
@@ -97,3 +101,10 @@ def vehicle_check_result(check_if_vehicle_in_radius):
 @pytest.fixture
 def vehicle_check_correct(check_if_vehicle_in_radius):
     return check_if_vehicle_in_radius[1]
+
+
+@pytest.fixture
+def vehicles_in_radius(paris, correct_states):
+    return library.retrieve_all_vehicles_in_radius(paris,
+                                                   correct_states['states'],
+                                                   *radius_and_error)

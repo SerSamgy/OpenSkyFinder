@@ -18,7 +18,8 @@ def get_all_states():
 
 def get_vehicle_with_coordinates(states):
     for item in states:
-        yield item[1], (item[6], item[5])  # callsign, (lat, long)
+        if item[1] and item[5] and item[6]:
+            yield item[1], (item[6], item[5])  # callsign, (lat, long)
 
 
 def check_if_vehicle_in_radius(origin, vehicle, radius, error=None):
@@ -31,6 +32,16 @@ def check_if_vehicle_in_radius(origin, vehicle, radius, error=None):
         return True
 
     return False
+
+
+def retrieve_all_vehicles_in_radius(origin, states, radius, error=None):
+    all_vehicles = []
+
+    for vehicle in get_vehicle_with_coordinates(states):
+        if check_if_vehicle_in_radius(origin, vehicle[1], radius, error):
+            all_vehicles.append(vehicle[0])
+
+    return all_vehicles
 
 
 def distance_between_points(point1, point2):
