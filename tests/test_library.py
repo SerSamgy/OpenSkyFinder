@@ -40,10 +40,7 @@ def retrieved_states(get_patch, get_all_states_patch):
 
 @pytest.fixture
 def bad_url(monkeypatch):
-    def url_mock():
-        return 'FFFUUU!'
-
-    monkeypatch.setattr(skyfinder, 'GET_ALL_STATES_URL', url_mock)
+    monkeypatch.setattr(skyfinder, 'GET_ALL_STATES_URL', 'FFFUUU!')
 
 
 @pytest.fixture
@@ -104,6 +101,7 @@ def vehicle_check_correct(check_if_vehicle_in_radius):
 
 @pytest.fixture
 def vehicles_in_radius(paris, correct_states):
-    return skyfinder.retrieve_all_vehicles_in_radius(paris,
-                                                     correct_states['states'],
-                                                     *radius_and_error)
+    return list(
+        skyfinder.retrieve_all_vehicles_in_radius(paris,
+                                                  correct_states['states'],
+                                                  *radius_and_error))

@@ -2,6 +2,8 @@
 A collection of methods to work with OpenSky API.
 """
 
+import collections
+
 from haversine import haversine
 import requests
 
@@ -9,12 +11,13 @@ import src.exceptions as exceptions
 
 OPEN_SKY_URL = 'https://opensky-network.org/api'
 GET_ALL_STATES_URL = OPEN_SKY_URL + '/states/all'
+Vehicle = collections.namedtuple('Vehicle', 'callsign, coordinates')
 
 
 def get_all_states():
     """Get all states from OpenSky site.
 
-    :return: json object
+    :return: json data
     :rtype: dict
     :raises: exceptions.RequestException
     """
@@ -30,41 +33,41 @@ def get_vehicle_with_coordinates(states):
     """Get vehicle call sign with its coordinates.
 
     :param states: List of lists with vehicles states
-    :return: tuple in format 'callsign, (latitude, longitude)'
+    :return: Vehicle object
     """
     for item in states:
         if item[1] and item[5] and item[6]:
-            yield item[1], (item[6], item[5])  # callsign, (lat, long)
+            yield Vehicle(item[1], (item[6], item[5]))
 
 
-def check_if_vehicle_in_radius(origin, vehicle, radius, error=None):
+def check_if_vehicle_in_radius(origin, coordinates, radius, error=None):
     """Check if vehicle is in radius of origin point.
 
     :param origin: Coordinates of point to check radius from in format 'latitude, longitude'
-    :param vehicle: Coordinates of vehicle in format 'latitude, longitude'
+    :param coordinates: Coordinates of vehicle in format 'latitude, longitude'
     :param radius: Integer value of radius in kilometers from origin point.
     :param error: (optional) Integer value for measurement error
     :return: bool
     """
     if error:
         max_err_distance = radius + error
-        if distance_between_points(origin, vehicle) <= max_err_distance:
+        if distance_between_points(origin, coordinates) <= max_err_distance:
             return True
 
-    if distance_between_points(origin, vehicle) <= radius:
+    if distance_between_points(origin, coordinates) <= radius:
         return True
 
     return False
 
 
 def retrieve_all_vehicles_in_radius(origin, states, radius, error=None):
-    """Get list of vehicles call signs which are in radius of origin point.
+    """Get generator of vehicles call signs which are in radius of origin point.
 
     :param origin: Coordinates of point to check radius from in format 'latitude, longitude'
     :param states: List of lists with vehicles states
     :param radius: Integer value of radius in kilometers from origin point.
     :param error: (optional) Integer value for measurement error
-    :return: list of vehicles call signs
+    :return: generator object of vehicles call signs
 
     Example. Find all vehicles within a radius of 450 kilometers from Paris (±50 km)::
 
@@ -86,16 +89,13 @@ def retrieve_all_vehicles_in_radius(origin, states, radius, error=None):
          None, 10050.78, False, 212.57, 196.59, 0, None, 10050.78, None,\
          False, False]\
     ]
-    >>> retrieve_all_vehicles_in_radius(paris_coordinates, states, *radius_and_error)
+    >>> list(retrieve_all_vehicles_in_radius(paris_coordinates, states, *radius_and_error))
     ['IBE6800 ', 'CHEPTELA']
     """
-    all_vehicles = []
 
     for vehicle in get_vehicle_with_coordinates(states):
-        if check_if_vehicle_in_radius(origin, vehicle[1], radius, error):
-            all_vehicles.append(vehicle[0])
-
-    return all_vehicles
+        if check_if_vehicle_in_radius(origin, vehicle.coordinates, radius, error):
+            yield vehicle.callsign
 
 
 def distance_between_points(point1, point2):

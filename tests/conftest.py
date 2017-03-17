@@ -1,6 +1,8 @@
 import pytest
 import requests
 
+from src import skyfinder
+
 all_states = {
     "time": 1489568690,
     "states": [
@@ -32,15 +34,25 @@ def available_vehicles(correct_states):
     vehicles = []
 
     for vehicle in correct_states['states']:
-        vehicle_item = vehicle[1], (vehicle[6], vehicle[5])
+        vehicle_item = skyfinder.Vehicle(vehicle[1], (vehicle[6], vehicle[5]))
         vehicles.append(vehicle_item)
 
     return vehicles
 
 
 @pytest.fixture
-def correct_vehicles_in_radius(available_vehicles):
-    return [available_vehicles[2][0], available_vehicles[3][0]]
+def close_vehicle_from_spain(available_vehicles):
+    return available_vehicles[2].callsign
+
+
+@pytest.fixture
+def close_vehicle_from_france(available_vehicles):
+    return available_vehicles[3].callsign
+
+
+@pytest.fixture
+def correct_vehicles_in_radius(close_vehicle_from_spain, close_vehicle_from_france):
+    return [close_vehicle_from_spain, close_vehicle_from_france]
 
 
 @pytest.fixture
