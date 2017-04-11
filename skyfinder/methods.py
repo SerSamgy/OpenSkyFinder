@@ -4,10 +4,10 @@ A collection of methods to work with OpenSky API.
 
 import collections
 
-from haversine import haversine
 import requests
+from haversine import haversine
 
-import src.exceptions as exceptions
+import skyfinder.exceptions as exceptions
 
 OPEN_SKY_URL = 'https://opensky-network.org/api'
 GET_ALL_STATES_URL = OPEN_SKY_URL + '/states/all'

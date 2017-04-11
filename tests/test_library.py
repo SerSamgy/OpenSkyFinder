@@ -1,6 +1,6 @@
 import pytest
 
-from src import skyfinder, exceptions
+from skyfinder import methods, exceptions
 
 paris_coordinates = (48.8567, 2.3508)
 radius_and_error = (450, 50)
@@ -12,7 +12,7 @@ def test_retrieve_all_states(retrieved_states, correct_states):
 
 def test_retrieve_request_error_on_getting_all_states(bad_url):
     with pytest.raises(exceptions.RequestsError):
-        skyfinder.get_all_states()
+        methods.get_all_states()
         
         
 def test_distance_between_points(retrieved_distance, correct_distance):
@@ -34,13 +34,13 @@ def test_retrieve_all_vehicles_in_radius(vehicles_in_radius, correct_vehicles_in
 
 @pytest.fixture
 def retrieved_states(get_patch, get_all_states_patch):
-    states = skyfinder.get_all_states()
+    states = methods.get_all_states()
     return states
 
 
 @pytest.fixture
 def bad_url(monkeypatch):
-    monkeypatch.setattr(skyfinder, 'GET_ALL_STATES_URL', 'FFFUUU!')
+    monkeypatch.setattr(methods, 'GET_ALL_STATES_URL', 'FFFUUU!')
 
 
 @pytest.fixture
@@ -55,7 +55,7 @@ def tours():
 
 @pytest.fixture
 def retrieved_distance(paris, tours):
-    return round(skyfinder.distance_between_points(paris, tours))
+    return round(methods.distance_between_points(paris, tours))
 
 
 @pytest.fixture
@@ -65,7 +65,7 @@ def correct_distance():
 
 @pytest.fixture
 def vehicle_info_gen(correct_states):
-    return skyfinder.get_vehicle_with_coordinates(correct_states['states'])
+    return methods.get_vehicle_with_coordinates(correct_states['states'])
 
 
 @pytest.fixture(params=[
@@ -86,7 +86,7 @@ def vehicle_info_gen(correct_states):
     "vehicle is in distance greater than radius + error"
 ])
 def check_if_vehicle_in_radius(request):
-    return skyfinder.check_if_vehicle_in_radius(*request.param[0]), request.param[1]
+    return methods.check_if_vehicle_in_radius(*request.param[0]), request.param[1]
 
 
 @pytest.fixture
@@ -102,6 +102,6 @@ def vehicle_check_correct(check_if_vehicle_in_radius):
 @pytest.fixture
 def vehicles_in_radius(paris, correct_states):
     return list(
-        skyfinder.retrieve_all_vehicles_in_radius(paris,
-                                                  correct_states['states'],
-                                                  *radius_and_error))
+        methods.retrieve_all_vehicles_in_radius(paris,
+                                                correct_states['states'],
+                                                *radius_and_error))

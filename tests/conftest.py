@@ -1,7 +1,7 @@
 import pytest
 import requests
 
-from src import skyfinder
+from skyfinder import methods
 
 all_states = {
     "time": 1489568690,
@@ -34,7 +34,7 @@ def available_vehicles(correct_states):
     vehicles = []
 
     for vehicle in correct_states['states']:
-        vehicle_item = skyfinder.Vehicle(vehicle[1], (vehicle[6], vehicle[5]))
+        vehicle_item = methods.Vehicle(vehicle[1], (vehicle[6], vehicle[5]))
         vehicles.append(vehicle_item)
 
     return vehicles
