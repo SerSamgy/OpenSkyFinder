@@ -19,8 +19,7 @@ def setup_package():
     setup(
         setup_requires=['pytest-runner'] + sphinx,
         tests_require=['pytest', 'pytest-cov'],
-        install_requires=['haversine==0.4.5', 'requests==2.13.0'],
-        # packages=find_packages()
+        install_requires=['haversine==0.4.5', 'requests==2.13.0']
     )
 
 
